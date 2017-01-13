@@ -1,5 +1,5 @@
 # Aho-Corasick
-A concurrency-safe Aho-Corasick string matching algorithms implemented by golang.
+A concurrency-safe Aho-Corasick string matching algorithms implementation in golang.
 
 ## Example
 ```golang
