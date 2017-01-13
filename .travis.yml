@@ -1,0 +1,4 @@
+language: go
+script: go get github.com/hikkikuma1991/ahocorasick && go test
+notifications:
+  email: false
