@@ -1,6 +1,8 @@
 # Aho-Corasick
 A concurrency-safe Aho-Corasick string matching algorithms implementation in golang.
 
+[![Build Status](https://travis-ci.org/hikkikuma1991/ahocorasick.svg?branch=master)](https://travis-ci.org/hikkikuma1991/ahocorasick)
+
 ## Example
 ```golang
     m := NewMatcher()
