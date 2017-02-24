@@ -2,7 +2,6 @@ package ahocorasick
 
 import (
 	"container/list"
-	"log"
 	"sync"
 )
 
@@ -131,7 +130,6 @@ func (m *Matcher) Search(str string) (wordIndex map[string][]int) {
 		}
 
 		if state.output != nil {
-			log.Println(k, state.output)
 			for _, v := range state.output {
 				wordIndex[v] = append(wordIndex[v], k)
 			}

@@ -2,6 +2,7 @@ package ahocorasick
 
 import (
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -136,4 +137,19 @@ func TestInsertAfterBuild(t *testing.T) {
 	assert(t, reflect.DeepEqual(hits["Phi"], []int{127}))
 	assert(t, reflect.DeepEqual(hits["Ph"], []int{126}))
 	assert(t, reflect.DeepEqual(hits["P"], []int{125}))
+}
+
+func benchmarkSingleString(b *testing.B, pattern []string, text string) {
+	m := NewMatcher()
+	m.Build(pattern)
+	b.SetBytes(int64(len(text)))
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		m.Search(text)
+	}
+}
+
+func BenchmarkChineseMatch(b *testing.B) {
+	dictionary := []string{"罗马帝国寰宇之内的各式各样的宗教信仰和膜拜", "罗马帝国寰宇之内的各式各样的宗教信仰和膜", "罗马帝国寰宇之内的各式各样的宗教信仰和", "罗马帝国寰宇之内的各式各样的宗教信仰", "罗马帝国寰宇之内的各式各样的宗教信", "罗马帝国寰宇之内的各式各样的宗教", "罗马帝国寰宇之内的各式各样的宗", "罗马帝国寰宇之内的各式各样的", "罗马帝国寰宇之内的各式各样", "罗马帝国寰宇之内的各式各", "罗马帝国寰宇之内的各式", "罗马帝国寰宇之内的各", "罗马帝国寰宇之内的", "罗马帝国寰宇之内", "罗马帝国寰宇之", "罗马帝国寰宇", "罗马帝国寰", "罗马帝国", "罗马帝", "罗马", "罗"}
+	benchmarkSingleString(b, dictionary, strings.Repeat("流行于罗马帝国寰宇之内的各式各样的宗教信仰和膜拜，一般人民看来都是同样灵验；明哲之士看来，同样荒诞；统治阶级看来，同样有用。", 100))
 }
