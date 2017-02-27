@@ -6,9 +6,10 @@ import (
 )
 
 type node struct {
-	child  map[rune]*node
-	output []string
-	fail   *node
+	child    map[rune]*node
+	output   []string
+	fail     *node
+	priority int
 }
 
 func newNode() *node {
@@ -77,6 +78,12 @@ Insert a entry to trie tree, and build fail functions.
 func (m *Matcher) Insert(entry string) {
 	m.locker.Lock()
 	defer m.locker.Unlock()
+
+	m.add(entry)
+	m.buildFail()
+}
+
+func (m *Matcher) add(entry string) {
 	cur := m.root
 	for _, runeValue := range entry {
 		if _, exist := cur.child[runeValue]; !exist {
@@ -85,7 +92,30 @@ func (m *Matcher) Insert(entry string) {
 		cur = cur.child[runeValue]
 	}
 	cur.output = []string{entry}
-	m.buildFail()
+	cur.priority = 1
+}
+func (m *Matcher) delete(entry string) {
+	l := list.New()
+	cur := m.root
+	for _, runeValue := range entry {
+		if _, exist := cur.child[runeValue]; !exist {
+			return
+		}
+		if cur.priority > 0 {
+			l = nil
+		} else {
+			l.PushBack(cur)
+		}
+		cur = cur.child[runeValue]
+	}
+	if cur.priority <= 0 {
+		return
+	}
+
+}
+func (m *Matcher) Delete(entry string) {
+	m.locker.Lock()
+	defer m.locker.Unlock()
 }
 
 /*
@@ -95,16 +125,7 @@ func (m *Matcher) Build(dictionary []string) {
 	m.locker.Lock()
 	defer m.locker.Unlock()
 	for _, entry := range dictionary {
-		cur := m.root
-		runeSlice := []rune(entry)
-		for _, v := range runeSlice {
-			if _, exist := cur.child[v]; !exist {
-				cur.child[v] = newNode()
-			}
-			cur = cur.child[v]
-		}
-		cur.output = append(cur.output, entry)
-
+		m.add(entry)
 	}
 	// Now let's build fail function.
 	m.buildFail()
